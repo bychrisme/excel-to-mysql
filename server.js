@@ -1,0 +1,31 @@
+import express from 'express';
+import bodyparser from 'body-parser';
+import cors from 'cors';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
+const app = express();
+
+var corsOptions = {
+    origin: process.env.CLIENT_HOST || "*"
+};
+
+app.use(cors(corsOptions));
+// parse requests of content-type - application/json
+app.use(bodyparser.json());
+// parse requests of content-type - application/x-www-form-urlencoded
+app.use(bodyparser.urlencoded({extended: true}));
+
+app.get("/", (req, res) => {
+    res.json({
+        message: "Welcome to my application",
+    })
+});
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+  console.log(`Welcome on my application.`);
+  console.log(`Author : bychrisme <christianmeli81@gmail.com>.`);
+  console.log(`Server is running on port ${PORT}.`);
+  console.log(`You can launch your application in browser using http://localhost:${PORT}.`);
+});
