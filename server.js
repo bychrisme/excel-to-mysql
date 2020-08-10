@@ -3,6 +3,9 @@ import bodyparser from 'body-parser';
 import cors from 'cors';
 import * as dotenv from 'dotenv';
 
+// import routes
+import ConvertRoutes from './app/routes/convert.route';
+
 dotenv.config();
 
 const app = express();
@@ -22,10 +25,13 @@ app.get("/", (req, res) => {
         message: "Welcome to my application",
     })
 });
+app.use("/api", ConvertRoutes);
+
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Welcome on my application.`);
   console.log(`Author : bychrisme <christianmeli81@gmail.com>.`);
   console.log(`Server is running on port ${PORT}.`);
   console.log(`You can launch your application in browser using http://localhost:${PORT}.`);
+  console.log(``);
 });
