@@ -2,6 +2,7 @@ import express from 'express';
 import bodyparser from 'body-parser';
 import cors from 'cors';
 import * as dotenv from 'dotenv';
+import fileUpload from 'express-fileupload';
 
 // import routes
 import ConvertRoutes from './app/routes/convert.route';
@@ -14,11 +15,13 @@ var corsOptions = {
     origin: process.env.CLIENT_HOST || "*"
 };
 
+app.use(express.static('public'));
 app.use(cors(corsOptions));
 // parse requests of content-type - application/json
 app.use(bodyparser.json());
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyparser.urlencoded({extended: true}));
+app.use(fileUpload());
 
 app.get("/", (req, res) => {
     res.json({
