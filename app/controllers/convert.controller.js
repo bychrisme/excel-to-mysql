@@ -1,5 +1,6 @@
 import Excel from 'exceljs';
 import { parseDate } from '../utils/helpers';
+import fs from 'fs';
 
 // convert function
 exports.index = (req, res) => {
@@ -9,6 +10,22 @@ exports.index = (req, res) => {
     const table_type = [];
     const array_accept = ["xlsx", "xls"]
     let col_number = 0
+
+    // there i'm try to create directory where file will be save after uploading
+    if (!fs.existsSync(uploads_folder)){
+        console.log("create ", uploads_folder, "folder")
+        const folders = uploads_folder.split("/")
+        let folder_to_create = "";
+        console.log(folders)
+        for(let i =1; i<folders.length - 1; i++){
+            const folder = folders[i];
+            if(folder !== "" || folder !== "."){
+                folder_to_create = folder_to_create + folder + "/";
+            }
+            console.log(folder_to_create)
+            if (!fs.existsSync(folder_to_create))fs.mkdirSync(folder_to_create);
+        }
+    }
 
     if (!files) {
         return res.status(500).send({ msg: "file is not found" })
