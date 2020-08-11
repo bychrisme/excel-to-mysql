@@ -1,6 +1,12 @@
 import Excel from 'exceljs';
 import { parseDate } from '../utils/helpers';
 import fs from 'fs';
+import mysql from 'mysql2'
+import dbConfig from "../config/db.config";
+import { createTable, insertData } from '../utils/query';
+
+// let connection = mysql.createConnection(dbConfig);
+let connection = mysql.createConnection(dbConfig);
 
 // convert function
 exports.index = (req, res) => {
@@ -62,13 +68,13 @@ exports.index = (req, res) => {
                 row.eachCell({ includeEmpty: true }, function (cell, colNumber) {
                     if(rowNumber === 1){
                         line.push(cell.value);
-                        table_type.push(typeof cell.value);
+                        table_type.push((typeof cell.value === 'string' ? 'varchar' : typeof cell.value));
                         col_number++;
                     }else{
                         if(colNumber <= col_number){
                             const col_index = colNumber -1;
                             let val = cell.value;
-                            const current_type = typeof cell.value;
+                            const current_type = (typeof cell.value === 'string' ? 'varchar' : typeof cell.value);
                             if(typeof val === 'object') {
                                 if(val && !val.hyperlink) val = parseDate(val);
                             }
@@ -76,9 +82,9 @@ exports.index = (req, res) => {
                             if(current_type === "string"){
                                 table_type[col_index] = current_type;
                             }else if(current_type === "number"){
-                                (Number.isInteger(val) && (table_type[col_index] === "int" || table_type[col_index] === "string")) ? table_type[col_index] = "int" : table_type[col_index] = "decimal"; 
+                                (Number.isInteger(val) && (table_type[col_index] === "int" || table_type[col_index] === "varchar")) ? table_type[col_index] = "int" : table_type[col_index] = "decimal"; 
                             }else if(current_type === "object"){
-                                val ? table_type[col_index] = "datetime" : table_type[col_index] = "string";
+                                val ? table_type[col_index] = "datetime" : table_type[col_index] = "varchar";
                             }
     
                         }
@@ -91,6 +97,17 @@ exports.index = (req, res) => {
             });
             
             console.log("file was read successfull >>>>>>");
+
+            const query_create = createTable(name, data[0], table_type);
+            const query_insert = insertData(name, data);
+
+            console.log("creating table", name, "...");
+            connection.query(query_create);
+            console.log("insert data on table ...");
+            connection.query(query_insert);
+            console.log("Data inserted !!!");
+
+            // connection.end();
     
             res.send({
                 message: `you are on the converter url !!!`,
