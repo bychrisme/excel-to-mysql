@@ -1,9 +1,9 @@
 import Excel from 'exceljs';
-import { parseDate } from '../utils/helpers';
+import { parseDate, getSqlType  } from '../utils/helpers';
 import fs from 'fs';
 import mysql from 'mysql2'
 import dbConfig from "../config/db.config";
-import { createTable, insertData } from '../utils/query';
+import { createTable, insertData, dropTable} from '../utils/query';
 
 // let connection = mysql.createConnection(dbConfig);
 let connection = mysql.createConnection(dbConfig);
@@ -14,8 +14,8 @@ exports.index = (req, res) => {
     const uploads_folder = process.env.UPLOAD_PATH;
     const data = [];
     const table_type = [];
-    const array_accept = ["xlsx", "xls"]
-    let col_number = 0
+    const array_accept = ["xlsx", "xls"];
+    let col_number = 0;
 
     // there i'm try to create directory where file will be save after uploading
     if (!fs.existsSync(uploads_folder)){
@@ -59,6 +59,7 @@ exports.index = (req, res) => {
     if(req.body.sheet) sheet = req.body.sheet;
     if(req.body.name) name = req.body.name;
     let workbook = new Excel.Workbook();
+    console.log("");
     console.log("start reading >>>>>>");
     try{
         workbook.xlsx.readFile(filePath).then(function () {
@@ -68,7 +69,7 @@ exports.index = (req, res) => {
                 row.eachCell({ includeEmpty: true }, function (cell, colNumber) {
                     if(rowNumber === 1){
                         line.push(cell.value);
-                        table_type.push((typeof cell.value === 'string' ? 'varchar' : typeof cell.value));
+                        table_type.push("int");
                         col_number++;
                     }else{
                         if(colNumber <= col_number){
@@ -76,37 +77,48 @@ exports.index = (req, res) => {
                             let val = cell.value;
                             const current_type = (typeof cell.value === 'string' ? 'varchar' : typeof cell.value);
                             if(typeof val === 'object') {
-                                if(val && !val.hyperlink) val = parseDate(val);
+                                if(val){
+                                    if(val.hyperlink){
+                                        val = val.text;
+                                    }else{
+                                        val = parseDate(val);
+                                    }
+                                }
                             }
                             line.push(val);
-                            if(current_type === "string"){
-                                table_type[col_index] = current_type;
-                            }else if(current_type === "number"){
-                                (Number.isInteger(val) && (table_type[col_index] === "int" || table_type[col_index] === "varchar")) ? table_type[col_index] = "int" : table_type[col_index] = "decimal"; 
-                            }else if(current_type === "object"){
-                                val ? table_type[col_index] = "datetime" : table_type[col_index] = "varchar";
-                            }
+                            table_type[col_index] = getSqlType(table_type[col_index], val);
     
                         }
                     }
                 });
-                // console.log(line)
-                // console.log(table_type)
                 
                 data.push(line);
             });
             
             console.log("file was read successfull >>>>>>");
 
+            const query_drop = dropTable(name);
             const query_create = createTable(name, data[0], table_type);
             const query_insert = insertData(name, data);
 
             console.log("creating table", name, "...");
-            connection.query(query_create);
-            console.log("insert data on table ...");
-            connection.query(query_insert);
-            console.log("Data inserted !!!");
-
+            connection.promise().query(query_drop)
+            .then(()=>{
+                console.log("table are droped if exist");
+                connection.promise().query(query_create);
+            })
+            .then(()=>{
+                console.log("table created ...");
+                connection.promise().query(query_insert);
+                console.log(query_create)
+            })
+            .then(()=>{
+                console.log("data insert on table ...");
+            })
+            .catch(err => {
+                console.log("error =>", err.message)
+            });
+            
             // connection.end();
     
             res.send({

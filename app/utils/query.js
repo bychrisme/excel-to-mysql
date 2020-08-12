@@ -1,10 +1,17 @@
+const dropTable = (table_name) => {
+    return `
+        DROP TABLE IF EXISTS ${table_name};
+    `;
+}
+
 const createTable = (table_name, attribute, type) => {
     let parameters = "";
     const nbr = type.length - 1;
     attribute.forEach((element, i) => {
         let value = "";
         let comma = "";
-        if(type[i] === "varchar")value = "(255)";
+        if(type[i] === "varchar") value = "(255)";
+        if(type[i] === "int") value = "(11)";
         if(i < nbr) comma = ", ";
         parameters = parameters + element + " " + type[i].toUpperCase() + " "+ value + comma;
     });
@@ -46,5 +53,6 @@ const insertData = (table_name, data) => {
 
 export {
     createTable,
-    insertData
+    insertData,
+    dropTable
 }
