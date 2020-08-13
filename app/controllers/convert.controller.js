@@ -110,7 +110,6 @@ exports.index = (req, res) => {
             .then(()=>{
                 console.log("table created ...");
                 connection.promise().query(query_insert);
-                console.log(query_create)
             })
             .then(()=>{
                 console.log("data insert on table ...");

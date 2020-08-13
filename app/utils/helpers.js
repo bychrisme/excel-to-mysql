@@ -19,7 +19,6 @@ const parseTwoDigits = (nbr) => {
 
 const getSqlType = (actual_type, value) => {
     let type = "varchar";
-    if(value === "2019-06-22 10:22:48") console.log("found value : ", value, typeof value)
     if(typeof value === "string"){
         const isDate = value.split(":");
         if(isDate.length > 1){
