@@ -102,7 +102,7 @@ exports.index = (req, res) => {
             const query_insert = insertData(name, data);
 
             console.log("creating table", name, "...");
-            connection.promise().query(query_drop)
+            /*connection.promise().query(query_drop)
             .then(()=>{
                 console.log("table are droped if exist");
                 connection.promise().query(query_create);
@@ -116,11 +116,19 @@ exports.index = (req, res) => {
             })
             .catch(err => {
                 console.log("error =>", err.message)
+            });*/
+            
+            connection.promise().query(query_insert)
+            .then(()=>{
+                console.log("data insert on table ...");
+            })
+            .catch(err => {
+                console.log("error =>", err.message)
             });
             
             // connection.end();
     
-            res.send({
+            return res.send({
                 message: `you are on the converter url !!!`,
                 data_type: table_type,
                 data: data,
