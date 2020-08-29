@@ -120,7 +120,7 @@ exports.index = (req, res) => {
             
             // connection.end();
     
-            res.send({
+            return res.send({
                 message: `you are on the converter url !!!`,
                 data_type: table_type,
                 data: data,
