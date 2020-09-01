@@ -12,7 +12,7 @@ let connection = mysql.createConnection(dbConfig);
 exports.index = (req, res) => {
     const {files} = req;
     const uploads_folder = process.env.UPLOAD_PATH;
-    const data = [];
+    const data = [[]];
     const table_type = [];
     const array_accept = ["xlsx", "xls"];
     let col_number = 0;
@@ -64,9 +64,17 @@ exports.index = (req, res) => {
     try{
         workbook.xlsx.readFile(filePath).then(function () {
             let worksheet = workbook.worksheets[sheet];
+            let worksheetArray = worksheet.getSheetValues();;
+            let i=0;
+            let j=0;
+          
+            data[j]= [];
+            console.log("attach data", data[j])
             worksheet.eachRow({ includeEmpty: false }, function (row, rowNumber) {
-                const line = [];
+                const line = []; 
+                i++;
                 row.eachCell({ includeEmpty: true }, function (cell, colNumber) {
+                   
                     if(rowNumber === 1){
                         line.push(cell.value);
                         table_type.push("int");
@@ -92,16 +100,44 @@ exports.index = (req, res) => {
                     }
                 });
                 
-                data.push(line);
+                data[j].push(line);
+                if (i==1000) {
+                    j++;
+                    data[j]=[];
+            console.log("attach data", data[j])
+                }
             });
-            
-            console.log("file was read successfull >>>>>>");
+            console.log("dattttttttttttttttttt",data);
+            // data.forEach((element,index) => {
+            //     console.log("indexindexindexindex >>>>>>",index);
+                
+            //     const query_insert = insertData(name, element);
+            //     if (index==0) {
+            //         const query_drop = dropTable(name);
+            //     const query_create = createTable(name, element[0], table_type);
+                  
+            //             connection.promise().query(query_create);
+                   
+            //     }
+           
+
+            // console.log(query_insert)
+            // connection.promise().query(query_insert)
+            // .then(()=>{
+            //     console.log("data insert on table ...");
+            // })
+            // .catch(err => {
+            //     console.log("error =>", err.message)
+            // });
+           
+            // });
 
             const query_drop = dropTable(name);
-            const query_create = createTable(name, data[0], table_type);
-            const query_insert = insertData(name, data);
+            const header=data[0][0];
 
-            console.log("creating table", name, "...");
+            const query_create = createTable(name, header, table_type);
+            console.log("-------------------------------start",data[0][0])
+
             connection.promise().query(query_drop)
             .then(()=>{
                 console.log("table are droped if exist");
@@ -109,7 +145,27 @@ exports.index = (req, res) => {
             })
             .then(()=>{
                 console.log("table created ...");
-                connection.promise().query(query_insert);
+                data.forEach((element,index) => {
+                        if (index>0) {
+                            element = [...[header], ...element];
+                        }
+                        const query_insert = insertData(name, element);
+
+
+                connection.promise().query(query_insert)
+                .then(()=>{
+                    console.log("data insert on table ...");
+                })
+                .catch(err => {
+                    console.log("error =>", err.message)
+                });
+                       
+                
+               
+    
+               
+               
+                });
             })
             .then(()=>{
                 console.log("data insert on table ...");
@@ -117,7 +173,6 @@ exports.index = (req, res) => {
             .catch(err => {
                 console.log("error =>", err.message)
             });
-            
             // connection.end();
     
             return res.send({
