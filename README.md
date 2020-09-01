@@ -31,6 +31,12 @@ $ cp .env.example .env
 $ nano .env
 ```
 
+If you use Windows operating system make sure to move DB_SOCKET_PATH content in your .env file
+
+```sh
+$ DB_SOCKET_PATH=
+```
+
 ### Usage
 
 Use postman to test api, you can also pass `name` in request to specify table name you want to create

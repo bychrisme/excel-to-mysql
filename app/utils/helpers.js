@@ -27,17 +27,17 @@ const getSqlType = (actual_type, value) => {
     }else if(actual_type === "varchar" && typeof value === "string"){
         type = "varchar";
     }else if(actual_type === "varchar" && typeof value === "number"){
-        // (Number.isInteger(value) && actual_type === "int") ? type = "int" : type = "decimal";
+        // (Number.isInteger(value) && actual_type === "int") ? type = "int" : type = "float";
         type = "varchar";
     }else if(actual_type === "int" && typeof value === "string"){
         value.toLowerCase === "null" ? type = "int" : type = "varchar";
     }else if(actual_type === "int" && typeof value === "number"){
-        (Number.isInteger(value) && actual_type === "int") ? type = "int" : type = "decimal";
+        (Number.isInteger(value) && actual_type === "int") ? type = "int" : type = "float";
         (Number.isInteger(value) && value > 1000000) ? type = "bigint" : type = "int";
-    }else if(actual_type === "decimal" && typeof value === "number"){
-        type = "decimal";
-    }else if(actual_type === "decimal" && typeof value === "string"){
-        value.toLowerCase === "null" ? type = "decimal" : type = "varchar";
+    }else if(actual_type === "float" && typeof value === "number"){
+        type = "float";
+    }else if(actual_type === "float" && typeof value === "string"){
+        value.toLowerCase === "null" ? type = "float" : type = "varchar";
     }else if(actual_type === "bigint"){
         type = "bigint";
     }else{
