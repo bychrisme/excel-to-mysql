@@ -20,7 +20,8 @@ app.use(cors(corsOptions));
 // parse requests of content-type - application/json
 app.use(bodyparser.json());
 // parse requests of content-type - application/x-www-form-urlencoded
-app.use(bodyparser.urlencoded({extended: true}));
+app.use(express.json({limit: '50mb'}));
+app.use(bodyparser.urlencoded({extended: true, limit: '50mb'}));
 app.use(fileUpload());
 
 app.get("/", (req, res) => {
