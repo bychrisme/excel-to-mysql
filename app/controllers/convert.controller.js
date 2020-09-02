@@ -69,7 +69,6 @@ exports.index = (req, res) => {
             let j=0;
           
             data[j]= [];
-            console.log("attach data", data[j])
             worksheet.eachRow({ includeEmpty: false }, function (row, rowNumber) {
                 const line = []; 
                 i++;
@@ -102,9 +101,9 @@ exports.index = (req, res) => {
                 
                 data[j].push(line);
                 if (i==1000) {
+                    i=0;
                     j++;
                     data[j]=[];
-            console.log("attach data", data[j])
                 }
             });
             console.log("dattttttttttttttttttt",data);
@@ -136,7 +135,6 @@ exports.index = (req, res) => {
             const header=data[0][0];
 
             const query_create = createTable(name, header, table_type);
-            console.log("-------------------------------start",data[0][0])
 
             connection.promise().query(query_drop)
             .then(()=>{
@@ -144,25 +142,33 @@ exports.index = (req, res) => {
                 connection.promise().query(query_create);
             })
             .then(()=>{
-                console.log("table created ...");
+                console.log("table created ...",data.length);
                 data.forEach((element,index) => {
-                        if (index>0) {
+                 let timer =   setTimeout(function(){
+                        console.log(index);
+                         if (index>0) {
                             element = [...[header], ...element];
                         }
                         const query_insert = insertData(name, element);
 
+                     
+                              connection.promise().query(query_insert)
+                              .then(()=>{
 
-                connection.promise().query(query_insert)
-                .then(()=>{
-                    console.log("data insert on table ...");
-                })
-                .catch(err => {
-                    console.log("error =>", err.message)
-                });
-                       
-                
-               
+                                  console.log("data insert on table ...");
+                                  clearTimeout(timer);
+                                  console.log("timout cleared after data insert on table ...");
+
+
+                              })
+                              .catch(err => {
+                                  console.log("error =>", err.message);
+                              }); 
+                          
+                         
     
+                    },index * 5000)
+                       
                
                
                 });

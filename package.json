@@ -1,5 +1,5 @@
 {
-  "name": "excel-to-mysql",
+  "name": "@bychrisme/excel-to-mysql",
   "version": "1.0.0",
   "description": "Librairy to extract data on Excel file to generate SQL syntax that we will use to insert in database",
   "main": "index.js",
