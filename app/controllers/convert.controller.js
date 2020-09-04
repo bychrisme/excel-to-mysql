@@ -136,12 +136,6 @@ exports.index = (req, res) => {
 
             const query_create = createTable(name, header, table_type);
 
-            connection.promise().query(query_drop)
-            .then(()=>{
-                console.log("table are droped if exist");
-                connection.promise().query(query_create);
-            })
-            .then(()=>{
                 console.log("table created ...",data.length);
                 data.forEach((element,index) => {
                  let timer =   setTimeout(function(){
@@ -172,13 +166,7 @@ exports.index = (req, res) => {
                
                
                 });
-            })
-            .then(()=>{
-                console.log("data insert on table ...");
-            })
-            .catch(err => {
-                console.log("error =>", err.message)
-            });
+          
             // connection.end();
     
             return res.send({
