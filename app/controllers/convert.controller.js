@@ -72,7 +72,7 @@ exports.index = (req, res) => {
             worksheet.eachRow({ includeEmpty: false }, function (row, rowNumber) {
                 const line = []; 
                 i++;
-                row.eachCell({ includeEmpty: true }, function (cell, colNumber) {
+                row.eachCell({ includeEmpty: false }, function (cell, colNumber) {
                    
                     if(rowNumber === 1){
                         line.push(cell.value);
@@ -106,7 +106,6 @@ exports.index = (req, res) => {
                     data[j]=[];
                 }
             });
-            console.log("dattttttttttttttttttt",data);
             // data.forEach((element,index) => {
             //     console.log("indexindexindexindex >>>>>>",index);
                 
@@ -136,36 +135,36 @@ exports.index = (req, res) => {
 
             const query_create = createTable(name, header, table_type);
 
-                console.log("table created ...",data.length);
-                data.forEach((element,index) => {
-                 let timer =   setTimeout(function(){
-                        console.log(index);
-                         if (index>0) {
-                            element = [...[header], ...element];
-                        }
-                        const query_insert = insertData(name, element);
+            console.log("table ", name);
+            data.forEach((element,index) => {
+                let timer =   setTimeout(function(){
+                    console.log(index);
+                        if (index>0) {
+                        element = [...[header], ...element];
+                    }
+                    const query_insert = insertData(name, element);
 
-                     
-                              connection.promise().query(query_insert)
-                              .then(()=>{
+                    
+                            connection.promise().query(query_insert)
+                            .then(()=>{
 
-                                  console.log("data insert on table ...");
-                                  clearTimeout(timer);
-                                  console.log("timout cleared after data insert on table ...");
+                                console.log("data insert on table ...");
+                                clearTimeout(timer);
+                                console.log("timout cleared after data insert on table ...");
 
 
-                              })
-                              .catch(err => {
-                                  console.log("error =>", err.message);
-                              }); 
-                          
-                         
-    
-                    },index * 5000)
-                       
-               
-               
-                });
+                            })
+                            .catch(err => {
+                                console.log("error =>", err.message);
+                            }); 
+                        
+                        
+
+                },index * 5000)
+                    
+            
+            
+            });
           
             // connection.end();
     
