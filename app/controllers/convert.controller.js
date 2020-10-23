@@ -72,7 +72,7 @@ exports.index = (req, res) => {
             worksheet.eachRow({ includeEmpty: false }, function (row, rowNumber) {
                 const line = []; 
                 i++;
-                row.eachCell({ includeEmpty: false }, function (cell, colNumber) {
+                row.eachCell({ includeEmpty: true }, function (cell, colNumber) {
                    
                     if(rowNumber === 1){
                         line.push(cell.value);
@@ -144,6 +144,7 @@ exports.index = (req, res) => {
                     }
                     const query_insert = insertData(name, element);
 
+                    // console.log("query =>", query_insert)
                     
                             connection.promise().query(query_insert)
                             .then(()=>{
