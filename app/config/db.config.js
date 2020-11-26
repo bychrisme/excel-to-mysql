@@ -6,7 +6,7 @@ let dbConfig = {
     user    : process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    socketPath: process.env.DB_SOCKET_PATH
+    // socketPath: process.env.DB_SOCKET_PATH
   };
   
 module.exports = dbConfig;

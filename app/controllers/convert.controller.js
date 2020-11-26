@@ -136,6 +136,8 @@ exports.index = (req, res) => {
             const query_create = createTable(name, header, table_type);
 
             console.log("table ", name);
+            console.log("nombre de boucle ", data.length);
+            const taille = data.length;
             data.forEach((element,index) => {
                 let timer =   setTimeout(function(){
                     console.log(index);
@@ -153,19 +155,18 @@ exports.index = (req, res) => {
                                 clearTimeout(timer);
                                 console.log("timout cleared after data insert on table ...");
 
+                                if(index === taille - 1){
+                                    console.log("eAll data insert successfully");
+                                }
 
                             })
                             .catch(err => {
                                 console.log("error =>", err.message);
                             }); 
-                        
-                        
-
                 },index * 5000)
-                    
-            
-            
             });
+
+
           
             // connection.end();
     
