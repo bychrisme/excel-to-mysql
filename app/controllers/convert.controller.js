@@ -156,7 +156,7 @@ exports.index = (req, res) => {
                                 console.log("timout cleared after data insert on table ...");
 
                                 if(index === taille - 1){
-                                    console.log("eAll data insert successfully");
+                                    console.log("--- All data insert successfully");
                                 }
 
                             })
