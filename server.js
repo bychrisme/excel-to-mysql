@@ -12,7 +12,7 @@ dotenv.config();
 const app = express();
 
 var corsOptions = {
-    origin: process.env.CLIENT_HOST || "*"
+    // origin: process.env.CLIENT_HOST || "*"
 };
 
 app.use(express.static('public'));
